@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PWAkedex</title>
+    <!--bootstrap-->
+    <script defer src="./lib/bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
+
+    <!--manifest-->
+    <link rel="manifest" href="/collinso/pwakedex/favicon/site.webmanifest" />
+
+    <!--Open Graph info-->
+    <meta name="author" content="oscar.collins@etu.univ-smb.fr"/>
+    <meta name="description" content="Pokedex web app">
+    <meta property="og:description" content="Pokedex web app">
+    <meta property="og:image" content="https://srv-peda2.iut-acy.univ-smb.fr/collinso/pwakedex/favicon/og-image-512x512.png">
+    <meta property="og:locale" content="fr">
+    <meta property="og:title" content="PWAkedex">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://srv-peda2.iut-acy.univ-smb.fr/collinso/pwakedex/">
+ 
+    <!--pwa icons-->
+    <link rel="icon" type="image/png" href="/collinso/pwakedex/favicon/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/collinso/pwakedex/favicon/favicon.svg" />
+    <link rel="shortcut icon" href="/collinso/pwakedex/favicon/favicon.ico" />
+    
+    <!--apple pwa icons-->
+    <link rel="apple-touch-icon" sizes="180x180" href="/collinso/pwakedex/favicon/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="My first pwakedex" />
+
+    <!--styles--> 
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!--bootstrap-->
+    <link rel="stylesheet" href="./lib/bootstrap-5.3.8-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="./CSS/style.css">
+
+    <!--d3.js-->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
+    <!--scripts-->
+    <script defer type="module" src="./JS/version-manager.js"></script>
+    <script defer type="module" src="./JS/fetch-and-DB.js"></script>
+    <script defer type="module" src="./JS/pokemon-detail.js"></script>
+
+   
+ 
+</head>
+
+
+
+
+<body class="text-light">
+
+    <!--unnused-->
+    <header>
+
+    </header>
+
+    <!--navbar-->
+    <nav id="main-navbar" class="navbar navbar-expand-lg">
+        <div class="container-fluid" >
+
+            <!--Logo and title-->
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <img src=".\IMG\logo\webp\logo-64x64.webp" width="50" height="50">
+                <span class="ms-2 h4 mb-0">PWAkedex</span>
+            </a>
+
+            <!--Toggle button-->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!--collapsed navbar content (And PWA installation dialog/buttons)-->
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <!--nav links go here-->
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Pokemon</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Games</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Items</a>
+                    </li>                 
+                </ul>
+
+                <!--PWA installation button and dialogue-->
+                <div id="PWA-Install">
+                    <!-- Button to manually trigger dialogue -->
+                    <button id="PWA-Install-open-dialog" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Install-PWA-Modal">
+                        Install PWA?
+                    </button>
+
+                    <!-- Install dialogue -->
+                    <div class="modal fade" id="Install-PWA-Modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                
+                                <!--Title-->
+                                <div class="modal-header">
+                                    <h5 class="modal-title fs-5">Install as PWA?</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button><!--X close button-->
+                                </div>
+
+                                <!--text-->
+                                <div class="modal-body">
+                                    Installing the app as a PWA allows for offline use
+                                </div>
+
+                                <!--choice buttons-->
+                                <div class="modal-footer">
+                                    <button id="PWA-install-confirm" type="button" class="btn btn-primary" data-bs-dismiss="modal">Install</button>
+                                    <button id="PWA-install-cancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                 </div>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+
+        <!-- Welcome -->
+        <section class="text-center container mt-3 mt-md-4 mb-3 mb-md-4 px-3">
+            <h1 class="display-4 display-md-3 fw-bold">Pokemon Detail</h1>
+        </section>
+
+        
+        <!-- Search bar + toggle -->
+        <nav class="navbar bg-dark rounded-4 p-3 my-3 mx-3">
+            <div class="d-flex w-100 justify-content-between align-items-center flex-wrap">
+                
+                <!--subtitle-->
+                <span class="navbar-brand text-light m-0">pokemon search</span>
+                
+                
+
+                <!--search bar + search button-->
+                <form class="mx-3 flex-grow-1" role="search">
+                    <div class="input-group">
+                        <input id="pokemon-search-bar" class="form-control" type="search" placeholder="Name or Number">
+                        <button id="pokemon-search-button" class="btn btn-outline-success" type="button">Search</button>
+                    </div>
+                </form>
+            </div>
+        </nav>
+
+
+        <section class="container mb-5 px-3">
+            <div class="row justify-content-center">
+                <div class="col-12 col-md-10 col-lg-8 col-xl-6">
+                    <div id="pokemon-detail-container" class="card bg-dark text-light shadow-lg border-0 rounded-4">
+                        
+                        <!-- Image Section -->
+                        <div class="card-header bg-transparent border-0 pt-4 pb-0">
+                            <img id="pokemon-detail-image" src="./IMG/default-pokemon-img.jpg" alt="Pokemon Image" class="mx-auto d-block" style="width: 100%; max-width: 250px; height: auto;">
+                        </div>
+                        
+                        <!-- Main Info Section -->
+                        <div class="card-body px-3 px-md-4 py-4">
+                            <h2 id="pokemon-detail-name" class="text-center mb-2 fs-1 fw-bold text-capitalize">Pokemon Name</h2>
+                            <h3 id="pokemon-detail-id" class="text-center mb-3 text-muted fs-4">#000</h3>
+                            <p id="pokemon-detail-description" class="text-center mb-4 px-2 px-md-4 fs-6 lh-base">This is a sample description of the Pokémon. It provides some interesting facts and information about the Pokémon's characteristics and behavior.</p>
+                            
+                            <!-- Types Section -->
+                            <div class="mb-4">
+                                <h4 class="text-center mb-3 fs-5 fw-semibold">Types</h4>
+                                <div class="d-flex justify-content-center align-items-center gap-3 flex-wrap">
+                                    <img id="pokemon-detail-type1" src="./IMG/elements/normal.png" alt="Type 1" class="type-icon" style="width: 5em; max-width: 80px;">
+                                    <img id="pokemon-detail-type2" src="./IMG/elements/normal.png" alt="Type 2" class="type-icon" style="width: 5em; max-width: 80px;">
+                                </div>
+                            </div>
+
+                            <!-- Stats Row -->
+                            <div class="row g-3 mb-4 text-center">
+                                <div class="col-6">
+                                    <div class="p-3 bg-secondary bg-opacity-25 rounded-3">
+                                        <p id="pokemon-detail-height" class="mb-0 fw-semibold">Height: 0.0 m</p>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="p-3 bg-secondary bg-opacity-25 rounded-3">
+                                        <p id="pokemon-detail-weight" class="mb-0 fw-semibold">Weight: 0.0 kg</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Abilities Section -->
+                            <div class="mb-4">
+                                <h4 class="text-center mb-3 fs-5 fw-semibold">Abilities</h4>
+                                <p id="pokemon-detail-abilities" class="text-center mb-0 fs-6 text-capitalize">Ability 1, Ability 2</p>
+                            </div>
+                            
+                            <!-- Stats Section -->
+                            <div class="mb-4">
+                                <h4 class="text-center mb-3 fs-5 fw-semibold">Stats</h4>
+                                <div id="pokemon-stats-chart" class="d-flex justify-content-center"></div>
+                            </div>
+                            
+                            <!-- Evolution Section -->
+                            <div class="mb-4">
+                                <h4 class="text-center mb-3 fs-5 fw-semibold">Evolution Chain</h4>
+                                <div id="pokemon-evolutions" class="d-flex justify-content-center align-items-center gap-3 flex-wrap">
+                                    <p class="text-muted mb-0">Loading evolutions...</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Variants Section -->
+                            <div class="mb-4">
+                                <h4 class="text-center mb-3 fs-5 fw-semibold">Variants</h4>
+                                <div id="pokemon-variants" class="d-flex justify-content-center align-items-center gap-3 flex-wrap">
+                                    <p class="text-muted mb-0">Loading variants...</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Weaknesses Section -->
+                            <div class="text-center">
+                                <h4 class="mb-3 fs-5 fw-semibold">Weaknesses</h4>
+                                <div class="d-flex justify-content-center align-items-center gap-2 gap-md-3 flex-wrap">
+                                    <img id="pokemon-detail-weakness1" src="./IMG/elements/normal.png" alt="Weakness 1" class="type-icon" style="width: 3em; max-width: 60px;">
+                                    <img id="pokemon-detail-weakness2" src="./IMG/elements/normal.png" alt="Weakness 2" class="type-icon" style="width: 3em; max-width: 60px;">
+                                    <img id="pokemon-detail-weakness3" src="./IMG/elements/normal.png" alt="Weakness 3" class="type-icon" style="width: 3em; max-width: 60px;">
+                                </div>
+                            </div>
+                        </div>
+                        <!-- End of Main Info Section -->
+
+                        <!-- Navigation Links -->
+                        <div class="card-footer bg-transparent border-0 py-4">
+                            <div class="d-flex justify-content-between align-items-center gap-3 px-3">
+                                <a href="" class="btn btn-outline-light rounded-pill px-4 py-2 flex-fill text-center" style="max-width: 200px;">
+                                    <span class="d-inline-block">&larr;</span> Previous
+                                </a>
+                                <a href="" class="btn btn-outline-light rounded-pill px-4 py-2 flex-fill text-center" style="max-width: 200px;">
+                                    Next <span class="d-inline-block">&rarr;</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+                
+            
+
+    </main>
+
+
+
+   
+
+
+
+
+
+
+
+
+
+    <footer class="bg-dark text-light text-center py-3 mt-auto">
+    <div class="container">
+        <p class="mb-1">© 2025 PWAkedex. All rights reserved.</p>
+        <a href="#" class="text-light text-decoration-none mx-2">Privacy</a>
+        <a href="#" class="text-light text-decoration-none mx-2">Terms</a>
+        <a href="#" class="text-light text-decoration-none mx-2">Contact</a>
+    </div>
+    </footer>
+
+
+    <!-- Reload toast (Bootstrap) -->
+    <div id="PWA-reload-toast" class="toast align-items-center text-bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">New version installed, please reload &rarr;</div>
+            <button id="PWA-in-toast-reload" type="button" class="btn btn-primary btn-sm me-2 reload-action">Reload</button>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+
+</body>
+
+
+
+
+</html>

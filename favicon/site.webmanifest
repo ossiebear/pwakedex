@@ -1,0 +1,26 @@
+{
+  "name": "PWAKEDEX",
+  "short_name": "DEX",
+  "icons": [
+    {
+      "src": "/collinso/pwakedex/favicon/web-app-manifest-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/collinso/pwakedex/favicon/web-app-manifest-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "theme_color": "#ff0000",
+  "background_color": "#ef1717",
+  "display": "standalone",
+
+  "description": "PWA pokedex",
+	"orientation": "portrait",
+	"start_url": "https://srv-peda2.iut-acy.univ-smb.fr/collinso/pwakedex/",
+	"scope": "https://srv-peda2.iut-acy.univ-smb.fr/collinso/pwakedex/"
+}

@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PWAkedex</title>
+    <!--bootstrap-->
+    <script defer src="./lib/bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
+
+    <!--manifest-->
+    <link rel="manifest" href="/collinso/pwakedex/favicon/site.webmanifest" />
+
+    <!--Open Graph info-->
+    <meta name="author" content="oscar.collins@etu.univ-smb.fr"/>
+    <meta name="description" content="Pokedex web app">
+    <meta property="og:description" content="Pokedex web app">
+    <meta property="og:image" content="https://srv-peda2.iut-acy.univ-smb.fr/collinso/pwakedex/favicon/og-image-512x512.png">
+    <meta property="og:locale" content="fr">
+    <meta property="og:title" content="PWAkedex">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://srv-peda2.iut-acy.univ-smb.fr/collinso/pwakedex/">
+ 
+    <!--pwa icons-->
+    <link rel="icon" type="image/png" href="/collinso/pwakedex/favicon/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/collinso/pwakedex/favicon/favicon.svg" />
+    <link rel="shortcut icon" href="/collinso/pwakedex/favicon/favicon.ico" />
+    
+    <!--apple pwa icons-->
+    <link rel="apple-touch-icon" sizes="180x180" href="/collinso/pwakedex/favicon/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="My first pwakedex" />
+
+    <!--styles--> 
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!--bootstrap-->
+    <link rel="stylesheet" href="./lib/bootstrap-5.3.8-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="./CSS/style.css">
+
+    <!--scripts-->
+    <script defer type="module" src="./JS/version-manager.js"></script> 
+    <script defer type="module" src="./JS/pokemon-grid.js"></script>
+    <script defer type="module" src="./JS/fetch-and-DB.js"></script>
+    <script defer type="module" src="./JS/indexed-db-funcs.js"></script>
+    
+    
+    <!--<script defer type="module" src="./JS/advanced-search.js"></script>-->
+    <!--<script defer type="module" src="./JS/fetch-and-cache.js"></script>-->
+
+   
+ 
+</head>
+
+
+<body class="text-light">
+
+    <!--unnused-->
+    <header>
+
+    </header>
+
+    <!--navbar-->
+    <nav id="main-navbar" class="navbar navbar-expand-lg">
+        <div class="container-fluid" >
+
+            <!--Logo and title-->
+            <a class="navbar-brand d-flex align-items-center" href="/index.html">
+                <img src=".\IMG\logo\webp\logo-64x64.webp" width="50" height="50">
+                <span class="ms-2 h4 mb-0">PWAkedex</span>
+            </a>
+
+            <!--Toggle button-->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!--collapsed navbar content (And PWA installation dialog/buttons)-->
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <!--nav links go here-->
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Pokemon</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Games</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Items</a>
+                    </li>                 
+                </ul>
+
+                <!--PWA installation button and dialogue-->
+                <div id="PWA-Install">
+                    <!-- Button to manually trigger dialogue -->
+                    <button id="PWA-Install-open-dialog" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Install-PWA-Modal">
+                        Install PWA?
+                    </button>
+
+                    <!-- Install dialogue -->
+                    <div class="modal fade" id="Install-PWA-Modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                
+                                <!--Title-->
+                                <div class="modal-header">
+                                    <h5 class="modal-title fs-5">Install as PWA?</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button><!--X close button-->
+                                </div>
+
+                                <!--text-->
+                                <div class="modal-body">
+                                    Installing the app as a PWA allows for offline use
+                                </div>
+
+                                <!--choice buttons-->
+                                <div class="modal-footer">
+                                    <button id="PWA-install-confirm" type="button" class="btn btn-primary" data-bs-dismiss="modal">Install</button>
+                                    <button id="PWA-install-cancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                 </div>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+
+        <!-- Welcome -->
+        <section class="text-center container mt-0 mb-3">
+            <br>
+            <h1>Welcome to PWAkedex</h1>
+            <br>
+        </section>
+
+        <!-- Pokémon section -->
+        <section class="container bg-dark rounded-3 p-0">
+
+            <!-- Search bar + toggle -->
+            <nav class="navbar bg-dark rounded-top p-3">
+                <div class="d-flex w-100 justify-content-between align-items-center flex-wrap">
+                    
+                    <!--subtitle-->
+                    <span class="navbar-brand text-light m-0">pokemon search</span>
+                    
+                    <!--advanced search toggle button-->
+                    <button class="btn btn-outline-light"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#advancedSearchCollapse">
+                        <span class="fw-bold">Advanced Search</span>
+                        <span class="ms-2">&#9662;</span>
+                    </button>
+
+                    <!--search bar + search button-->
+                    <form class="mx-3 flex-grow-1" role="search">
+                        <div class="input-group">
+                            <input id="pokemon-search-bar" class="form-control" type="search" placeholder="Name or Number">
+                            <button id="pokemon-search-button" class="btn btn-outline-success" type="button">Search</button>
+                        </div>
+                    </form>
+                </div>
+            </nav>
+
+            <!-- Advanced search -->
+            <div id="advancedSearchCollapse" class="collapse bg-dark text-light justify-content-center">
+
+                <hr class="m-0 baackground-dark"> <!--separator-->
+
+                <!-- Elemental container -->
+                <h5 class="text-center mt-3">Element Types</h5>
+                <div id="elements-container" class="px-3 py-3">
+                    <!-- JS will generate element buttons here -->
+                </div>
+                <br>
+                <hr class="m-0 baackground-dark"> <!--separator-->
+                
+                <div class="advanced-input-grid">
+                    <!-- weight range-->
+                    <div class="advanced-input-card">
+                        <h5 class="text-center">Weight Range</h5>
+                        <div class="input-group">
+                            <input id="weight-min" type="number" class="form-control" placeholder="Min">
+                            <span class="input-group-text">-</span>
+                            <input id="weight-max" type="number" class="form-control" placeholder="Max">
+                            <button class="btn btn-outline-secondary dropdown-toggle" 
+                                    type="button" 
+                                    data-bs-toggle="dropdown">
+                                kg
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item">kg</a></li>
+                                <li><a class="dropdown-item">lbs</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- height range-->
+                    <div class="advanced-input-card">
+                        <h5 class="text-center">Height Range</h5>
+                        <div class="input-group">
+                            <input id="height-min" type="number" class="form-control" placeholder="Min">
+                            <span class="input-group-text">-</span>
+                            <input id="height-max" type="number" class="form-control" placeholder="Max">
+                            <button class="btn btn-outline-secondary dropdown-toggle" 
+                                    type="button" 
+                                    data-bs-toggle="dropdown">
+                                cm
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item">cm</a></li>
+                                <li><a class="dropdown-item">in</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- ID range-->
+                    <div class="advanced-input-card">
+                        <h5 class="text-center">ID Range</h5>
+                        <div class="input-group">
+                            <input id="id-min" type="number" class="form-control" placeholder="Min" value="1">
+                            <span class="input-group-text">-</span>
+                            <input id="id-max" type="number" class="form-control" placeholder="Max" value="100">
+                        </div>
+                    </div>
+
+                    <!-- Abilities -->
+                    <div class="advanced-input-card">
+                        <h5 class="text-center">Abilities</h5>
+                        <div class="dropdown w-100">
+                            <button id="abilities-dropdown" class="btn btn-secondary dropdown-toggle w-100 text-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Pokemon Abilities
+                            </button>
+                            <ul class="dropdown-menu w-100">
+                                <li><a class="dropdown-item">1</a></li>
+                                <li><a class="dropdown-item">2</a></li>
+                                <li><a class="dropdown-item">3</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <hr class="m-0 baackground-dark"> <!--separator-->
+
+                <div id="API-preview" class="px-5 py-5 ">
+                    <h5 class="text-center">API request preview</h5>
+                    <div class="input-group flex-nowrap">
+                        <input type="text" class="form-control" placeholder="API request preview" aria-label="Username" aria-describedby="addon-wrapping">
+                    </div>
+                </div>
+
+                <hr class="m-0 baackground-dark"> <!--separator-->
+
+                <!-- Filter buttons -->
+                <div class="d-flex justify-content-center gap-3 mt-3 mb-3">
+                     <button id="reset-filters" class="btn btn-secondary">Reset</button>
+                    <button id="apply-filters" class="btn btn-primary">Apply</button>
+                </div>
+                <br>
+                 <hr class="m-0 baackground-dark"> <!--separator-->
+            </div>
+
+            <!-- Pokémon grid -->
+            <div id="pokemon-grid"
+                class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 y-4">
+            </div>
+
+            <!-- Load more button -->
+            <div class="d-flex justify-content-center my-3">
+                <button id="load-more-pokemon" class="btn btn-primary">Load More</button>
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+   
+
+
+
+
+
+
+
+
+
+    <footer class="bg-dark text-light text-center py-3 mt-auto">
+    <div class="container">
+        <p class="mb-1">© 2025 PWAkedex. All rights reserved.</p>
+        <a href="#" class="text-light text-decoration-none mx-2">Privacy</a>
+        <a href="#" class="text-light text-decoration-none mx-2">Terms</a>
+        <a href="#" class="text-light text-decoration-none mx-2">Contact</a>
+    </div>
+    </footer>
+
+
+    <!-- Reload toast (Bootstrap) -->
+    <div id="PWA-reload-toast" class="toast align-items-center text-bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">New version installed, please reload &rarr;</div>
+            <button id="PWA-in-toast-reload" type="button" class="btn btn-primary btn-sm me-2 reload-action">Reload</button>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+
+</body>
+
+
+
+
+</html>
+
+    
