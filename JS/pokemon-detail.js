@@ -1,7 +1,15 @@
+// pokemon-detail.js
+// Description: Dynamically fill pokemon_detail.html page with data using fetched Pokémon info from Dexie DB or API
+// Author: Oscar Collins
+// AI usage: Heavy AI assistance, made many manual corrections and improvements
 
-
+// Full description:
+// This script fetches detailed information about a specific Pokémon using its ID or name from the URL parameters.
+// It retrieves the data from a Dexie IndexedDB cache or the PokeAPI if not cached.
+// shows data: image, name, ID, description, types with popovers, abilities with popovers, height, weight, stats chart using D3.js, evolutions, variants, and weaknesses with popovers.
 
 import { getPokemonDataFromDexieOrAPI } from './fetch-and-DB.js';
+import { sharePokemon, initShareComponents, getShareCapabilities } from './share-manager.js';
 
 
 // CONSTANTS______________________________________________________________________________
@@ -14,10 +22,11 @@ const EL_TYPE2 = document.getElementById('pokemon-detail-type2');
 const EL_ABILITIES = document.getElementById('pokemon-detail-abilities');
 const EL_HEIGHT = document.getElementById('pokemon-detail-height');
 const EL_WEIGHT = document.getElementById('pokemon-detail-weight');
-const EL_WEAKNESSES_CONTAINER = document.querySelector('.text-center > .d-flex');
+const EL_WEAKNESSES_CONTAINER = document.getElementById('pokemon-weaknesses');
 const EL_STATS_CHART = document.getElementById('pokemon-stats-chart');
 const EL_EVOLUTIONS = document.getElementById('pokemon-evolutions');
 const EL_VARIANTS = document.getElementById('pokemon-variants');
+const EL_SHARE_BUTTON = document.getElementById('share-pokemon-btn');
 
 const TYPE_COLORS = {
     NORMAL: '#9fa19f',
@@ -44,6 +53,22 @@ const TYPE_COLORS = {
 
 // MAIN___________________________________________________________________________________
 const POKEMON_ID = new URLSearchParams(window.location.search).get('id');
+let CURRENT_POKEMON_DATA = null; // Store current Pokemon data for sharing
+
+// Initialize share components after DOM is ready
+initShareComponents();
+console.log('📤 Share capabilities:', getShareCapabilities());
+
+// Wire up share button
+if (EL_SHARE_BUTTON) {
+    EL_SHARE_BUTTON.addEventListener('click', async function() {
+        if (CURRENT_POKEMON_DATA) {
+            await sharePokemon(CURRENT_POKEMON_DATA);
+        } else {
+            console.warn('📤 No Pokémon data available to share');
+        }
+    });
+}
 
 if (POKEMON_ID) {
     displayPokemonDetails(POKEMON_ID);
@@ -68,6 +93,9 @@ async function displayPokemonDetails(id) {
     const DATA = await getPokemonDataFromDexieOrAPI(id);
     
     if (DATA) {
+        // Store data globally for sharing
+        CURRENT_POKEMON_DATA = DATA;
+        
         // Basic info
         EL_IMAGE.src = DATA.sprites.front_default || './IMG/default-pokemon-img.jpg';
         EL_IMAGE.alt = DATA.name;

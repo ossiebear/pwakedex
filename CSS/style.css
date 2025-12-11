@@ -1,3 +1,11 @@
+/* 
+style.css
+Description: Stylesheet for PWAkedex application
+Author: Oscar Collins
+AI usage: Almost fully AI-generated
+*/
+
+
 body {
     font-family: 'Poppins', sans-serif;
     background-color: #3b7085;
@@ -271,6 +279,45 @@ body {
     }
 }
 
+/* Pokemon card 3D hover effect */
+.pokemon-card {
+    transition: transform 0.001s , box-shadow 0.001s;
+    cursor: pointer;
+    transform-style: preserve-3d;
+    will-change: transform;
+}
+
+.pokemon-card:hover {
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5) !important;
+}
+
+.pokemon-card-img-container {
+    transform: translateZ(20px);
+    transform-style: preserve-3d;
+}
+
+.pokemon-card-body {
+    transform: translateZ(20px);
+    transform-style: preserve-3d;
+}
+
+.pokemon-card-img {
+    transform: translateZ(60px);
+    transition: transform 0.001s;
+}
+
+.pokemon-card-title {
+    transform: translateZ(20px);
+}
+
+.pokemon-card-badges {
+    transform: translateZ(20px);
+}
+
+.pokemon-card-types {
+    transform: translateZ(20px);
+}
+
 /* Desktop - keep vertical layout */
 @media (min-width: 576px) {
     .pokemon-card {
@@ -319,4 +366,58 @@ body {
 
 .popover-dark .popover-arrow::after {
     border-top-color: #2d2d2d;
+}
+
+/* Share button styling */
+#share-pokemon-btn {
+    transition: all 0.2s ease-in-out;
+    border-width: 2px;
+}
+
+#share-pokemon-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+#share-pokemon-btn:active {
+    transform: translateY(0);
+}
+
+#share-pokemon-btn svg {
+    vertical-align: middle;
+    transition: transform 0.2s ease-in-out;
+}
+
+#share-pokemon-btn:hover svg {
+    transform: scale(1.1);
+}
+
+/* Share toast positioning */
+#share-toast {
+    z-index: 1050;
+}
+
+/* Share fallback modal styling */
+#share-fallback-modal .modal-content {
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+#share-url-input {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+}
+
+#share-url-input:focus {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-color: #0d6efd;
+    color: #fff;
+}
+
+#share-copy-url-btn {
+    min-width: 80px;
+}
+
+#pokemon-search-navbar {
+    max-width: 50em;
 }

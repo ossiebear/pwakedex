@@ -1,6 +1,7 @@
 // version-manager.js
+// Description: Manages PWA installation prompts and service worker updates
 // Author: Oscar Collins
-// Last Modified: 2025
+// AI usage: None
 
 
 

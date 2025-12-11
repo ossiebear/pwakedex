@@ -1,11 +1,19 @@
 // indexed_db.js
-// Author: Oscar Collins
 // Description: Manages IndexedDB for storing Pokémon data
+// Author: Oscar Collins
+// AI usage: Description and docstrings assisted by AI
 
-// Code skeleton taken and adapted from Mozilla Developer Network 
+// Full description:
+// This module manages the IndexedDB database for storing Pokémon data using the Dexie.js library.
+// It provides functions to format API responses, add Pokémon data to the database, and retrieve data by name or ID.
+// It also includes functions to delete individual Pokémon entries and clear the entire database.
+
+
+
+// Code skeleton taken and adapted from MDN
 // (https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API/Using_IndexedDB)
 
-// Last Modified: 2025
+
 
 
 
@@ -49,7 +57,11 @@
 
 // HELPER FUNCTIONS ________________________________________________________________________
     
-    // stole this off stackoverflow...
+    /**
+     * Sanitizes a string value by escaping HTML entities to prevent XSS attacks.
+     * @param {*} value - The value to sanitize (if not a string, returns as-is)
+     * @returns {*} Sanitized and trimmed string, or original value if not a string
+     */
     function sanitizeString(value) {
         if (typeof value !== 'string') return value;
         return value.replace(/[<>'"&]/g, char => {
@@ -58,7 +70,19 @@
         }).trim();
     }
 
-    // not too happy with this one, remember to learn how to throw errors at some point
+    /**
+     * Formats a raw PokeAPI JSON response into a sanitized structure for IndexedDB storage.
+     * Extracts id, name, types, weight, height, and stores the full JSON data.
+     * @param {Object} pokeAPI_json - Raw JSON response from PokeAPI
+     * @param {number} pokeAPI_json.id - Pokémon ID
+     * @param {string} pokeAPI_json.name - Pokémon name
+     * @param {string} [pokeAPI_json.type1] - Primary type
+     * @param {string} [pokeAPI_json.type2] - Secondary type (optional)
+     * @param {number} [pokeAPI_json.weight] - Weight in hectograms
+     * @param {number} [pokeAPI_json.height] - Height in decimeters
+     * @param {Object} [pokeAPI_json.full_json_data] - Complete API response object
+     * @returns {Object|null} Formatted object with sanitized fields, or null if invalid input
+     */
     export function formatApiResponseForDB(pokeAPI_json) {
         let result;
         if (!pokeAPI_json?.id || !pokeAPI_json?.name) {
@@ -81,6 +105,19 @@
     }
 
 
+    /**
+     * Adds or updates a Pokémon entry in the IndexedDB database.
+     * Uses Dexie's put() method which performs upsert (insert or update).
+     * @param {Object} formattedApiResponse - Formatted Pokémon data from formatApiResponseForDB()
+     * @param {number} formattedApiResponse.id - Pokémon ID (primary key)
+     * @param {string} formattedApiResponse.name - Pokémon name
+     * @param {string} formattedApiResponse.type1 - Primary type
+     * @param {string} [formattedApiResponse.type2] - Secondary type
+     * @param {number} formattedApiResponse.weight - Weight in hectograms
+     * @param {number} formattedApiResponse.height - Height in decimeters
+     * @param {Object} formattedApiResponse.full_json_data - Complete API response
+     * @returns {Promise<number|null>} Primary key of inserted/updated record, or null on error
+     */
     export async function addPokemonToDB(formattedApiResponse) {
         console.debug("addPokemonToDB(formattedApiResponse)");
         let result;
@@ -100,6 +137,11 @@
 
 
 
+    /**
+     * Retrieves a Pokémon entry from the database by name.
+     * @param {string} name - Pokémon name to search for (case-sensitive)
+     * @returns {Promise<Object|null>} Full Pokémon data object if found, null on error, undefined if not found
+     */
     export async function getPokemonDataFromDb_Name(name) {
         let result;
         console.debug(`getPokemonDataFromDb_Name(${name})`);
@@ -117,6 +159,11 @@
 
 
 
+    /**
+     * Retrieves a Pokémon entry from the database by ID.
+     * @param {number|string} id - Pokémon ID (converted to number internally)
+     * @returns {Promise<Object|null>} Full Pokémon data object if found, null on error, undefined if not found
+     */
     export async function getPokemonDataFromDb_ID(id) {
         let result;
         console.debug("getPokemonDataFromDb_ID()");
@@ -134,6 +181,11 @@
 
 
 
+    /**
+     * Deletes a Pokémon entry from the database by ID.
+     * @param {number|string} id - Pokémon ID to delete (converted to number internally)
+     * @returns {Promise<void>} Logs success message or error
+     */
     export async function deletePokemonFromDB(id) {
         console.debug("deletePokemonFromDB()");
         try {
@@ -148,6 +200,10 @@
 
 
 
+    /**
+     * Clears all Pokémon entries from the database.
+     * @returns {Promise<void>} Logs success message or error
+     */
     export async function clearPokemonDB() {
         try {
             await db.pokemon.clear();
@@ -196,7 +252,7 @@
 /*********************************/
 /*           OLD CODE            */
 /*********************************/
-
+// Dont delete yet, might need some of this later...
 
 
 

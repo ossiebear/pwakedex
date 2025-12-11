@@ -1,3 +1,10 @@
+<!--
+Title: pokemon-detail.html
+Description: Detailed view page for individual Pokemon in PWAkedex
+Author: Oscar Collins
+AI usage: Icon in Share button
+-->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -41,11 +48,14 @@
     <!--scripts-->
     <script defer type="module" src="./JS/version-manager.js"></script>
     <script defer type="module" src="./JS/fetch-and-DB.js"></script>
+    <script defer type="module" src="./JS/share-manager.js"></script>
     <script defer type="module" src="./JS/pokemon-detail.js"></script>
-
-   
- 
 </head>
+
+
+
+
+
 
 
 
@@ -62,7 +72,7 @@
         <div class="container-fluid" >
 
             <!--Logo and title-->
-            <a class="navbar-brand d-flex align-items-center" href="#">
+            <a class="navbar-brand d-flex align-items-center" href="/collinso/pwakedex/index.html">
                 <img src=".\IMG\logo\webp\logo-64x64.webp" width="50" height="50">
                 <span class="ms-2 h4 mb-0">PWAkedex</span>
             </a>
@@ -74,19 +84,19 @@
 
             <!--collapsed navbar content (And PWA installation dialog/buttons)-->
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+               <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <!--nav links go here-->
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                        <a class="nav-link active" aria-current="page" href="/collinso/pwakedex/index.html">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Pokemon</a>
+                        <a class="nav-link" href="/collinso/pwakedex/pokemon-detail.html?id=1">Pokemon</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Games</a>
+                        <a class="nav-link" href="/collinso/pwakedex/games.html">Games</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Items</a>
+                        <a class="nav-link" href="/collinso/pwakedex/items.html">Items</a>
                     </li>                 
                 </ul>
 
@@ -127,6 +137,14 @@
         </div>
     </nav>
 
+
+
+
+
+
+
+
+
     <main>
 
         <!-- Welcome -->
@@ -136,7 +154,7 @@
 
         
         <!-- Search bar + toggle -->
-        <nav class="navbar bg-dark rounded-4 p-3 my-3 mx-3">
+        <nav id="pokemon-search-navbar" class="navbar bg-dark rounded-4 p-3 my-3 mx-3 text-center mx-auto">
             <div class="d-flex w-100 justify-content-between align-items-center flex-wrap">
                 
                 <!--subtitle-->
@@ -169,6 +187,21 @@
                         <div class="card-body px-3 px-md-4 py-4">
                             <h2 id="pokemon-detail-name" class="text-center mb-2 fs-1 fw-bold text-capitalize">Pokemon Name</h2>
                             <h3 id="pokemon-detail-id" class="text-center mb-3 text-muted fs-4">#000</h3>
+                            
+                            <!-- Share Button (AI generated)-->
+                            <div class="text-center mb-4">
+                                <button id="share-pokemon-btn" class="btn btn-outline-light rounded-pill px-4 py-2" title="Share this Pokémon">
+                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" class="me-2" style="display: inline; vertical-align: middle;">
+                                        <circle cx="13" cy="3" r="2"></circle>
+                                        <circle cx="3" cy="13" r="2"></circle>
+                                        <circle cx="13" cy="13" r="2"></circle>
+                                        <line x1="5" y1="12" x2="11" y2="4"></line>
+                                        <line x1="12" y1="5" x2="4" y2="12"></line>
+                                    </svg>
+                                    Share
+                                </button>
+                            </div>
+                            
                             <p id="pokemon-detail-description" class="text-center mb-4 px-2 px-md-4 fs-6 lh-base">This is a sample description of the Pokémon. It provides some interesting facts and information about the Pokémon's characteristics and behavior.</p>
                             
                             <!-- Types Section -->
@@ -223,9 +256,9 @@
                             </div>
                             
                             <!-- Weaknesses Section -->
-                            <div class="text-center">
+                            <div id="pokemon-weaknesses" class="text-center">
                                 <h4 class="mb-3 fs-5 fw-semibold">Weaknesses</h4>
-                                <div class="d-flex justify-content-center align-items-center gap-2 gap-md-3 flex-wrap">
+                                <div class="d-flex justify-content-center align-items-center gap-3 flex-wrap">
                                     <img id="pokemon-detail-weakness1" src="./IMG/elements/normal.png" alt="Weakness 1" class="type-icon" style="width: 3em; max-width: 60px;">
                                     <img id="pokemon-detail-weakness2" src="./IMG/elements/normal.png" alt="Weakness 2" class="type-icon" style="width: 3em; max-width: 60px;">
                                     <img id="pokemon-detail-weakness3" src="./IMG/elements/normal.png" alt="Weakness 3" class="type-icon" style="width: 3em; max-width: 60px;">
@@ -249,9 +282,6 @@
                 </div>
             </div>
         </section>
-                
-            
-
     </main>
 
 
@@ -268,12 +298,20 @@
 
     <footer class="bg-dark text-light text-center py-3 mt-auto">
     <div class="container">
-        <p class="mb-1">© 2025 PWAkedex. All rights reserved.</p>
-        <a href="#" class="text-light text-decoration-none mx-2">Privacy</a>
-        <a href="#" class="text-light text-decoration-none mx-2">Terms</a>
-        <a href="#" class="text-light text-decoration-none mx-2">Contact</a>
+       <p class="mb-1">© 2025 PWAkedex. All rights reserved.</p>
+        <a href="/collinso/pwakedex/privacy.html" class="text-light text-decoration-none mx-2">Privacy</a>
+        <a href="/collinso/pwakedex/terms.html" class="text-light text-decoration-none mx-2">Terms</a>
+        <a href="/collinso/pwakedex/contact.html" class="text-light text-decoration-none mx-2">Contact</a>
     </div>
     </footer>
+
+
+
+
+
+
+
+
 
 
     <!-- Reload toast (Bootstrap) -->
@@ -285,6 +323,39 @@
         </div>
     </div>
 
+    <!-- Share toast (Bootstrap) -->
+    <div id="share-toast" class="toast align-items-center border-0 position-fixed bottom-0 end-0 m-3" role="alert" aria-live="polite" aria-atomic="true" style="z-index: 1050;">
+        <div class="d-flex">
+            <div class="toast-body">Shared successfully!</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+
+    <!-- Share fallback modal (for browsers without Web Share API) -->
+    <div class="modal fade" id="share-fallback-modal" tabindex="-1" aria-labelledby="shareFallbackLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark text-light">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title" id="shareFallbackLabel">Share Pokémon</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-2">Copy this link to share:</p>
+                    <div class="input-group">
+                        <input type="text" id="share-url-input" class="form-control" readonly>
+                        <button id="share-copy-url-btn" class="btn btn-outline-primary" type="button">
+                            <svg src="./IMG/icons/shares.svg" width="16" height="16"  class="bi bi-clipboard">
+                            </svg>
+                            Copy
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 
 

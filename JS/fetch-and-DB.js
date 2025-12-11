@@ -1,8 +1,12 @@
 // fetch-and-DB.js
-// Author: Oscar Collins
 // Description: Fetch Pokémon data from cache (Dexie DB) or API
-// Last Modified: 2025
+// Author: Oscar Collins
+// AI usage: Description and docstrings assisted by AI
 
+// Full description:
+// This module provides functions to retrieve Pokémon data either from a Dexie IndexedDB cache or by fetching from the PokeAPI.
+// If the data is not found in the cache, it fetches from the API, stores it in the Dexie DB for future use, and returns the data.
+// It includes helper functions to set, get, and clear cached Pokémon data in the Dexie DB.
 
 import { 
     db, 

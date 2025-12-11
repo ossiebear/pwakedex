@@ -1,7 +1,7 @@
 // advanced-search.js
 // Author: Oscar Collins
 // Description: Advanced search folddown logic.
-// Last Modified: 2025
+// AI usage: None
 
 
 

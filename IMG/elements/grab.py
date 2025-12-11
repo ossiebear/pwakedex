@@ -1,3 +1,6 @@
+# Grab type icons from Bulbapedia
+# Written Fully by AI
+
 import os
 import requests
 from bs4 import BeautifulSoup

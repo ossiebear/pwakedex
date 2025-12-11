@@ -1,9 +1,10 @@
 // find-and-cache.js
+// Description: Fetch Pokémon data from cache (localStorage) or API
 // Author: Oscar Collins
-// Last Modified: 2025
+// AI usage: None
 
 
-
+// Deprecated: Replaced by fetch-and-DB.js which uses Dexie IndexedDB for better performance and storage capacity.
 
 
 

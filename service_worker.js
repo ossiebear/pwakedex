@@ -6,7 +6,7 @@
 
 
 // app version: bump this string to force clients to refresh the cache
-const VERSION = '0.3';
+const VERSION = '0.1';
 console.log("Service Worker version:", VERSION);
 
 // List of files we want to pre-cache during install. These should be
@@ -68,6 +68,7 @@ const RESSOURCES = [
 	"./JS/pokemon-grid.js",
 	"./JS/fetch-and-DB.js",
 	"./JS/indexed-db-funcs.js",
+	"./JS/share-manager.js",
 
 	// style sheets & local bootstrap bundle (match case used in index.html)
 	"./CSS/style.css",

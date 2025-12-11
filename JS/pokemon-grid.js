@@ -1,7 +1,7 @@
 // pokemon-grid.js
-// Author: Oscar Collins
 // Description: Generates a grid of Pokémon cards using indexedDB data or API calls
-// Last Modified: 2025
+// Author: Oscar Collins
+// AI usage: 3D card effect
 
 
 import {getPokemonDataFromDexieOrAPI} from './fetch-and-DB.js';
@@ -43,7 +43,7 @@ import {getPokemonDataFromDexieOrAPI} from './fetch-and-DB.js';
     // Load more button
         const LOAD_MORE_BUTTON_EL = document.getElementById('load-more-pokemon');
         LOAD_MORE_BUTTON_EL.addEventListener('click', function() {
-            loadMorePokemon(10); //load 10 more pokemon on each click
+            loadMorePokemon(8); //load 8 more pokemon on each click
         });
 //________________________________________________________________________________________
 
@@ -180,9 +180,28 @@ function generatePokemonGrid(start, end) {
 
                 container.appendChild(col);
 
-                // Touch-friendly interaction (handled via CSS :active and :hover)
-                let cardElement = col.querySelector('.card-hover');
-                // Add touch event for better mobile feedback
+                // 3D card effect on mouse move (AI GENERATED)
+                let cardElement = col.querySelector('.pokemon-card');
+                
+                cardElement.addEventListener('mousemove', function(event) {
+                    const rect = cardElement.getBoundingClientRect();
+                    const x = event.clientX - rect.left;
+                    const y = event.clientY - rect.top;
+                    
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    
+                    const rotateX = (y - centerY) / centerY * -20;
+                    const rotateY = (x - centerX) / centerX * 20;
+                    
+                    cardElement.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05) translateZ(10px)`;
+                });
+                
+                cardElement.addEventListener('mouseleave', function() {
+                    cardElement.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale(1) translateZ(0)';
+                });
+                
+                // Touch-friendly interaction
                 cardElement.addEventListener('touchstart', function() { 
                     cardElement.classList.add('touch-active'); 
                 });
@@ -298,7 +317,7 @@ function loadMorePokemon(numToLoad) {
 
 
 // Generate Pokémon cards
-generatePokemonGrid(1, 10);
+generatePokemonGrid(1, 12);
 
 
 
