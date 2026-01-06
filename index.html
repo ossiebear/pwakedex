@@ -44,8 +44,8 @@ AI usage: None
 
     <!--scripts-->
     <script defer type="module" src="./JS/version-manager.js"></script> 
-    <script defer type="module" src="./JS/pokemon-grid.js"></script>
-    <script defer type="module" src="./JS/fetch-and-DB.js"></script>
+    <script defer type="module" src="./JS/grid-render.js"></script>
+    <script defer type="module" src="./JS/fetch-and-db.js"></script>
     <script defer type="module" src="./JS/indexed-db-funcs.js"></script>
     
     
@@ -96,6 +96,43 @@ AI usage: None
                         <a class="nav-link" href="/collinso/pwakedex/items.html">Items</a>
                     </li>                 
                 </ul>
+
+
+
+                <button id="PWA-Install-open-dialog" type="button" class="btn btn-primary mx-5" data-bs-toggle="modal" data-bs-target="#cache-all-pokemon-modal">
+                    Pokémon in cache: <span id="pokemon-in-cache-count">0</span>/1350
+                </button>
+                <div>
+                    <!-- Cache all Pokémon dialogue -->
+                    <div class="modal fade" id="cache-all-pokemon-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                
+                                <!--Title-->
+                                <div class="modal-header">
+                                    <h5 class="modal-title fs-5">Cache all Pokémon?</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button><!--X close button-->
+                                </div>
+
+                                <!--text-->
+                                <div class="modal-body">
+                                    Caching all Pokémon will allow offline use, but may take up significant storage space and time to download.
+                                    <div id="cache-progress-bar" class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="0" aria-valuemin="0" aria-valuemax="1328">
+                                        <div class="progress-bar"></div>
+                                    </div>
+                                    <span id="in-modal-pokemon-cache-count">0</span>/1350
+                                </div>  
+
+                                <!--choice buttons-->
+                                <div class="modal-footer">
+                                    <button id="cache-all-confirm" type="button" class="btn btn-primary">download</button>
+                                    <button id="cache-all-cancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
                 <!--PWA installation button and dialogue-->
                 <div id="PWA-Install">
                     <!-- Button to manually trigger dialogue -->
@@ -157,7 +194,7 @@ AI usage: None
                             type="button"
                             data-bs-toggle="collapse"
                             data-bs-target="#advancedSearchCollapse">
-                        <span class="fw-bold">Advanced Search</span>
+                        <span class="fw-bold">Element search</span>
                         <span class="ms-2">&#9662;</span>
                     </button>
 
@@ -171,7 +208,7 @@ AI usage: None
                 </div>
             </nav>
 
-            <!-- Advanced search -->
+            <!-- Element search -->
             <div id="advancedSearchCollapse" class="collapse bg-dark text-light justify-content-center">
 
                 <hr class="m-0 baackground-dark"> <!--separator-->
@@ -181,92 +218,6 @@ AI usage: None
                 <div id="elements-container" class="px-3 py-3">
                     <!-- JS will generate element buttons here -->
                 </div>
-                <br>
-                <hr class="m-0 baackground-dark"> <!--separator-->
-                
-                <div class="advanced-input-grid">
-                    <!-- weight range-->
-                    <div class="advanced-input-card">
-                        <h5 class="text-center">Weight Range</h5>
-                        <div class="input-group">
-                            <input id="weight-min" type="number" class="form-control" placeholder="Min">
-                            <span class="input-group-text">-</span>
-                            <input id="weight-max" type="number" class="form-control" placeholder="Max">
-                            <button class="btn btn-outline-secondary dropdown-toggle" 
-                                    type="button" 
-                                    data-bs-toggle="dropdown">
-                                kg
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item">kg</a></li>
-                                <li><a class="dropdown-item">lbs</a></li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <!-- height range-->
-                    <div class="advanced-input-card">
-                        <h5 class="text-center">Height Range</h5>
-                        <div class="input-group">
-                            <input id="height-min" type="number" class="form-control" placeholder="Min">
-                            <span class="input-group-text">-</span>
-                            <input id="height-max" type="number" class="form-control" placeholder="Max">
-                            <button class="btn btn-outline-secondary dropdown-toggle" 
-                                    type="button" 
-                                    data-bs-toggle="dropdown">
-                                cm
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item">cm</a></li>
-                                <li><a class="dropdown-item">in</a></li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <!-- ID range-->
-                    <div class="advanced-input-card">
-                        <h5 class="text-center">ID Range</h5>
-                        <div class="input-group">
-                            <input id="id-min" type="number" class="form-control" placeholder="Min" value="1">
-                            <span class="input-group-text">-</span>
-                            <input id="id-max" type="number" class="form-control" placeholder="Max" value="100">
-                        </div>
-                    </div>
-
-                    <!-- Abilities -->
-                    <div class="advanced-input-card">
-                        <h5 class="text-center">Abilities</h5>
-                        <div class="dropdown w-100">
-                            <button id="abilities-dropdown" class="btn btn-secondary dropdown-toggle w-100 text-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Pokemon Abilities
-                            </button>
-                            <ul class="dropdown-menu w-100">
-                                <li><a class="dropdown-item">1</a></li>
-                                <li><a class="dropdown-item">2</a></li>
-                                <li><a class="dropdown-item">3</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                
-                <hr class="m-0 baackground-dark"> <!--separator-->
-
-                <div id="API-preview" class="px-5 py-5 ">
-                    <h5 class="text-center">API request preview</h5>
-                    <div class="input-group flex-nowrap">
-                        <input type="text" class="form-control" placeholder="API request preview" aria-label="Username" aria-describedby="addon-wrapping">
-                    </div>
-                </div>
-
-                <hr class="m-0 baackground-dark"> <!--separator-->
-
-                <!-- Filter buttons -->
-                <div class="d-flex justify-content-center gap-3 mt-3 mb-3">
-                     <button id="reset-filters" class="btn btn-secondary">Reset</button>
-                    <button id="apply-filters" class="btn btn-primary">Apply</button>
-                </div>
-                <br>
-                 <hr class="m-0 baackground-dark"> <!--separator-->
             </div>
 
             <!-- Pokémon grid -->

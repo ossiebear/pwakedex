@@ -1,14 +1,15 @@
-// pokemon-detail.js
+// detail-render.js
 // Description: Dynamically fill pokemon_detail.html page with data using fetched Pokémon info from Dexie DB or API
 // Author: Oscar Collins
 // AI usage: Heavy AI assistance, made many manual corrections and improvements
 
 // Full description:
 // This script fetches detailed information about a specific Pokémon using its ID or name from the URL parameters.
-// It retrieves the data from a Dexie IndexedDB cache or the PokeAPI if not cached.
-// shows data: image, name, ID, description, types with popovers, abilities with popovers, height, weight, stats chart using D3.js, evolutions, variants, and weaknesses with popovers.
+// It retrieves the data from a Dexie IndexedDB cache or the PokeAPI if not cached via getPokemonDataFromDexieOrAPI().
+// Species data (description, evolutions, variants) is fetched once and passed to rendering functions.
+// Shows data: image, name, ID, description, types with popovers, abilities with popovers, height, weight, stats chart using D3.js, evolutions, variants, and weaknesses with popovers.
 
-import { getPokemonDataFromDexieOrAPI } from './fetch-and-DB.js';
+import { getPokemonDataFromDexieOrAPI } from './fetch-and-db.js';
 import { sharePokemon, initShareComponents, getShareCapabilities } from './share-manager.js';
 
 
@@ -17,8 +18,8 @@ const EL_IMAGE = document.getElementById('pokemon-detail-image');
 const EL_NAME = document.getElementById('pokemon-detail-name');
 const EL_ID = document.getElementById('pokemon-detail-id');
 const EL_DESCRIPTION = document.getElementById('pokemon-detail-description');
-const EL_TYPE1 = document.getElementById('pokemon-detail-type1');
-const EL_TYPE2 = document.getElementById('pokemon-detail-type2');
+const EL_TYPE1 = document.getElementById('pokemon-detail-type1-img');
+const EL_TYPE2 = document.getElementById('pokemon-detail-type2-img');
 const EL_ABILITIES = document.getElementById('pokemon-detail-abilities');
 const EL_HEIGHT = document.getElementById('pokemon-detail-height');
 const EL_WEIGHT = document.getElementById('pokemon-detail-weight');
@@ -61,9 +62,9 @@ console.log('📤 Share capabilities:', getShareCapabilities());
 
 // Wire up share button
 if (EL_SHARE_BUTTON) {
-    EL_SHARE_BUTTON.addEventListener('click', async function() {
+    EL_SHARE_BUTTON.addEventListener('click', function() {
         if (CURRENT_POKEMON_DATA) {
-            await sharePokemon(CURRENT_POKEMON_DATA);
+            sharePokemon(CURRENT_POKEMON_DATA);
         } else {
             console.warn('📤 No Pokémon data available to share');
         }
@@ -81,107 +82,90 @@ if (POKEMON_ID) {
 
 
 // FUNCTIONS______________________________________________________________________________
-
 /**
  * Fetch and display Pokémon details
+ * Uses getPokemonDataFromDexieOrAPI for cached Pokemon data, fetches species data once
  * @param {string|number} id - Pokémon ID or name
  */
 async function displayPokemonDetails(id) {
     console.debug(`displayPokemonDetails(${id})`);
     console.log("Fetching details for Pokémon ID:", id);
     
-    const DATA = await getPokemonDataFromDexieOrAPI(id);
+    // Fetch main Pokemon data from Dexie cache or API
+    const POKEMON_DATA = await getPokemonDataFromDexieOrAPI(id);
     
-    if (DATA) {
-        // Store data globally for sharing
-        CURRENT_POKEMON_DATA = DATA;
-        
-        // Basic info
-        EL_IMAGE.src = DATA.sprites.front_default || './IMG/default-pokemon-img.jpg';
-        EL_IMAGE.alt = DATA.name;
-        EL_NAME.textContent = DATA.name;
-        EL_ID.textContent = `#${DATA.id.toString().padStart(3, '0')}`;
-        
-        // Description from species endpoint
-        await fetchAndDisplayDescription(DATA.id);
-        
-        // Types
-        await displayTypes(DATA.types);
-        
-        // Height and Weight (convert from decimeters/hectograms)
-        const heightMeters = (DATA.height / 10).toFixed(1);
-        const weightKg = (DATA.weight / 10).toFixed(1);
-        EL_HEIGHT.textContent = `Height: ${heightMeters} m`;
-        EL_WEIGHT.textContent = `Weight: ${weightKg} kg`;
-        
-        // Abilities
-        await displayAbilities(DATA.abilities);
-        
-        // Stats
-        displayStats(DATA.stats);
-        
-        // Evolutions
-        await displayEvolutions(DATA.id);
-        
-        // Variants
-        await displayVariants(DATA.id, DATA.name);
-        
-        // Weaknesses
-        await displayWeaknesses(DATA.types);
-        
-        console.log("✅ Pokémon details displayed successfully");
-    }
-    else {
-        console.error("aborting displayPokemonDetails() - no data returned");
+    if (!POKEMON_DATA) {
+        console.error("❌ aborting displayPokemonDetails() - no data returned from getPokemonDataFromDexieOrAPI");
         alert("Failed to load Pokémon data. Please try again.");
+        return;
     }
-}
-
-/**
- * Fetch Pokémon description from species endpoint
- * @param {number} id - Pokémon ID
- */
-async function fetchAndDisplayDescription(id) {
-    console.debug(`fetchAndDisplayDescription(${id})`);
     
+    // Store data globally for sharing
+    CURRENT_POKEMON_DATA = POKEMON_DATA;
+    
+    // Basic info
+    EL_IMAGE.src = POKEMON_DATA.sprites.front_default || '/collinso/pwakedex/IMG/default-pokemon-img.jpg';
+    EL_IMAGE.alt = POKEMON_DATA.name;
+    EL_NAME.textContent = POKEMON_DATA.name;
+    EL_ID.textContent = `#${POKEMON_DATA.id.toString().padStart(3, '0')}`;
+    
+    // Height and Weight (convert from decimeters/hectograms)
+    const heightMeters = (POKEMON_DATA.height / 10).toFixed(1);
+    const weightKg = (POKEMON_DATA.weight / 10).toFixed(1);
+    EL_HEIGHT.textContent = `Height: ${heightMeters} m`;
+    EL_WEIGHT.textContent = `Weight: ${weightKg} kg`;
+    
+    // Fetch species data ONCE for description, evolutions, and variants
+    let speciesData = null;
     try {
-        const response = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${id}`);
-        
-        if (!response.ok) {
-            throw new Error(`Species API request failed: ${response.status}`);
+        const speciesResponse = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${POKEMON_DATA.id}`);
+        if (speciesResponse.ok) {
+            speciesData = await speciesResponse.json();
+            console.log("✅ Species data fetched successfully");
+        } else {
+            console.warn(`⚠️ Species API request failed: ${speciesResponse.status}`);
         }
-        
-        const speciesData = await response.json();
-        
-        // Find English flavor text entry
+    } catch (error) {
+        console.error('❌ Failed to fetch species data:', error);
+    }
+    
+    // Display description from species data
+    if (speciesData) {
         const englishEntry = speciesData.flavor_text_entries.find(function(entry) {
             return entry.language.name === 'en';
         });
         
         if (englishEntry) {
-            // Clean up text (remove form feeds and newlines, replace with spaces)
             const cleanText = englishEntry.flavor_text
                 .replace(/\f/g, ' ')
                 .replace(/\n/g, ' ')
                 .replace(/\s+/g, ' ')
                 .trim();
-            
             EL_DESCRIPTION.textContent = cleanText;
         } else {
             EL_DESCRIPTION.textContent = 'No description available.';
             console.warn("No English description found");
         }
-    } catch (error) {
-        console.error('❌ Failed to fetch species data:', error);
+    } else {
         EL_DESCRIPTION.textContent = 'Description unavailable.';
     }
+    
+    // Populate other sections using fetched data
+    displayTypes(POKEMON_DATA.types);
+    displayAbilities(POKEMON_DATA.abilities);
+    displayStats(POKEMON_DATA.stats);
+    displayEvolutions(speciesData, POKEMON_DATA.id);
+    displayVariants(speciesData, POKEMON_DATA.name);
+    displayWeaknesses(POKEMON_DATA.types);
+    
+    console.log("✅ Pokémon details displayed successfully");
 }
 
 /**
  * Display Pokémon types with appropriate icons and popovers
- * @param {Array} types - Array of type objects from API
+ * @param {Array} types - Array of type objects from Pokemon data (pokemonData.types)
  */
-async function displayTypes(types) {
+function displayTypes(types) {
     console.debug("displayTypes()");
     
     if (types && types.length > 0) {
@@ -192,7 +176,7 @@ async function displayTypes(types) {
         EL_TYPE1.style.cursor = 'pointer';
         
         // Add popover for type 1
-        await addTypePopover(EL_TYPE1, types[0].type.url, type1Name);
+        addTypePopover(EL_TYPE1, types[0].type.url, type1Name);
         
         if (types.length > 1) {
             const type2Name = types[1].type.name.toLowerCase();
@@ -202,7 +186,7 @@ async function displayTypes(types) {
             EL_TYPE2.style.cursor = 'pointer';
             
             // Add popover for type 2
-            await addTypePopover(EL_TYPE2, types[1].type.url, type2Name);
+            addTypePopover(EL_TYPE2, types[1].type.url, type2Name);
         } else {
             EL_TYPE2.style.display = 'none';
         }
@@ -211,9 +195,9 @@ async function displayTypes(types) {
 
 /**
  * Display Pokémon abilities with popovers
- * @param {Array} abilities - Array of ability objects from API
+ * @param {Array} abilities - Array of ability objects from Pokemon data (pokemonData.abilities)
  */
-async function displayAbilities(abilities) {
+function displayAbilities(abilities) {
     console.debug("displayAbilities()");
     
     EL_ABILITIES.innerHTML = '';
@@ -231,8 +215,8 @@ async function displayAbilities(abilities) {
             abilitySpan.style.textUnderlineOffset = '3px';
             abilitySpan.textContent = abilityName;
             
-            // Add popover to ability
-            await addAbilityPopover(abilitySpan, abilityObj.ability.url, abilityName);
+            // Add popover to ability (async, fire-and-forget)
+            addAbilityPopover(abilitySpan, abilityObj.ability.url, abilityName);
             
             EL_ABILITIES.appendChild(abilitySpan);
             
@@ -356,20 +340,18 @@ function displayStats(stats) {
 
 /**
  * Display Pokémon evolution chain
- * @param {number} id - Pokémon ID
+ * @param {Object|null} speciesData - Species data object from API (already fetched)
+ * @param {number} currentId - Current Pokémon ID for highlighting
  */
-async function displayEvolutions(id) {
-    console.debug(`displayEvolutions(${id})`);
+async function displayEvolutions(speciesData, currentId) {
+    console.debug(`displayEvolutions(speciesData, ${currentId})`);
+    
+    if (!speciesData) {
+        EL_EVOLUTIONS.innerHTML = '<p class="text-muted mb-0">Evolution data unavailable</p>';
+        return;
+    }
     
     try {
-        // First, get species data to find evolution chain URL
-        const speciesResponse = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${id}`);
-        
-        if (!speciesResponse.ok) {
-            throw new Error(`Species API request failed: ${speciesResponse.status}`);
-        }
-        
-        const speciesData = await speciesResponse.json();
         const evolutionChainUrl = speciesData.evolution_chain.url;
         
         // Fetch evolution chain data
@@ -420,7 +402,7 @@ async function displayEvolutions(id) {
                 img.style.cursor = 'pointer';
                 
                 // Highlight current Pokémon
-                if (evolution.id === id.toString()) {
+                if (evolution.id === currentId.toString()) {
                     evolutionCard.style.border = '2px solid #fac000';
                     evolutionCard.style.borderRadius = '12px';
                     evolutionCard.style.padding = '8px';
@@ -462,21 +444,18 @@ async function displayEvolutions(id) {
 
 /**
  * Display Pokémon variants (regional forms, mega evolutions, etc.)
- * @param {number} id - Pokémon ID
- * @param {string} currentName - Current Pokémon name
+ * @param {Object|null} speciesData - Species data object from API (already fetched)
+ * @param {string} currentName - Current Pokémon name to exclude from variants
  */
-async function displayVariants(id, currentName) {
-    console.debug(`displayVariants(${id}, ${currentName})`);
+async function displayVariants(speciesData, currentName) {
+    console.debug(`displayVariants(speciesData, ${currentName})`);
+    
+    if (!speciesData) {
+        EL_VARIANTS.innerHTML = '<p class="text-muted mb-0">Variant data unavailable</p>';
+        return;
+    }
     
     try {
-        // Get species data to find all varieties
-        const speciesResponse = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${id}`);
-        
-        if (!speciesResponse.ok) {
-            throw new Error(`Species API request failed: ${speciesResponse.status}`);
-        }
-        
-        const speciesData = await speciesResponse.json();
         const varieties = speciesData.varieties;
         
         // Filter out the current variant and get details for others
@@ -485,14 +464,26 @@ async function displayVariants(id, currentName) {
         for (const variety of varieties) {
             if (variety.pokemon.name !== currentName) {
                 try {
-                    const variantResponse = await fetch(variety.pokemon.url);
-                    const variantData = await variantResponse.json();
+                    // Use getPokemonDataFromDexieOrAPI for variant data when possible
+                    const variantData = await getPokemonDataFromDexieOrAPI(variety.pokemon.name);
                     
-                    variantsList.push({
-                        name: variantData.name,
-                        id: variantData.id,
-                        sprite: variantData.sprites.front_default
-                    });
+                    if (variantData) {
+                        variantsList.push({
+                            name: variantData.name,
+                            id: variantData.id,
+                            sprite: variantData.sprites.front_default
+                        });
+                    } else {
+                        // Fallback to direct API fetch if not in cache
+                        const variantResponse = await fetch(variety.pokemon.url);
+                        const variantApiData = await variantResponse.json();
+                        
+                        variantsList.push({
+                            name: variantApiData.name,
+                            id: variantApiData.id,
+                            sprite: variantApiData.sprites.front_default
+                        });
+                    }
                 } catch (error) {
                     console.warn(`Failed to fetch variant ${variety.pokemon.name}:`, error);
                 }
@@ -536,7 +527,8 @@ async function displayVariants(id, currentName) {
                 nameElement.style.maxWidth = '100px';
                 
                 // Format variant name (e.g., "pikachu-gmax" -> "Gmax")
-                let displayName = variant.name.replace(speciesData.name + '-', '');
+                const baseName = speciesData?.name || currentName.split('-')[0];
+                let displayName = variant.name.replace(baseName + '-', '');
                 displayName = displayName.replace('-', ' ');
                 nameElement.textContent = displayName;
                 
@@ -695,7 +687,7 @@ async function addTypePopover(element, typeUrl, typeName) {
 
 /**
  * Display Pokémon weaknesses based on type effectiveness from API
- * @param {Array} types - Array of type objects from API
+ * @param {Array} types - Array of type objects from Pokemon data (pokemonData.types)
  */
 async function displayWeaknesses(types) {
     console.debug("displayWeaknesses()");
@@ -707,12 +699,13 @@ async function displayWeaknesses(types) {
     
     try {
         // Fetch type data for each type to get damage relations
-        const typeDataPromises = types.map(function(typeObj) {
-            return fetch(typeObj.type.url).then(function(response) {
-                return response.json();
-            });
+        const typeDataPromises = types.map(async function(typeObj) {
+            const response = await fetch(typeObj.type.url);
+            if (!response.ok) {
+                throw new Error(`Type API request failed: ${response.status}`);
+            }
+            return await response.json();
         });
-        
         const typeDataArray = await Promise.all(typeDataPromises);
         
         // Calculate combined weaknesses

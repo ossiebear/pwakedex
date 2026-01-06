@@ -19,7 +19,8 @@
 
 
 
-
+// TODO!!
+// REMOVE THE initBootstrapComponent FUNCTION
 
 
 
@@ -54,7 +55,7 @@
 		const PWA_DIALOG_MANUAL_BUTTON_EL = document.getElementById("PWA-Install-open-dialog");
 		const PWA_DIALOG_MANUAL_BUTTON_BOOT= initBootstrapComponent(
 			PWA_DIALOG_MANUAL_BUTTON_EL,
-			(el) => new bootstrap.Button(el),
+			function(el) { return new bootstrap.Button(el); },
 			"bootstrap.Button#PWA-Install-open-dialog"
 		);
 	//-----------------------------------------------------------
@@ -62,7 +63,7 @@
 		const PWA_DIALOG_EL = document.getElementById("Install-PWA-Modal");
 		const PWA_DIALOG_BOOT = initBootstrapComponent(
 			PWA_DIALOG_EL,
-			(el) => new bootstrap.Modal(el),
+			function(el) { return new bootstrap.Modal(el); },
 			"bootstrap.Modal#Install-PWA-Modal"
 		);
 	//-----------------------------------------------------------
@@ -73,7 +74,7 @@
 		const PWA_DIALOG_CLOSE_EL = document.getElementById("PWA-install-cancel");
 		if(PWA_DIALOG_CLOSE_EL && PWA_DIALOG_BOOT)
 		{
-			PWA_DIALOG_CLOSE_EL.addEventListener('click', () => PWA_DIALOG_BOOT.hide());
+			PWA_DIALOG_CLOSE_EL.addEventListener('click', function() { PWA_DIALOG_BOOT.hide(); });
 		}
 	//-----------------------------------------------------------
 	// Install modal confirm button------------------------------
@@ -90,7 +91,7 @@
 		const PWA_TOAST_EL = document.getElementById('PWA-reload-toast');
 		const PWA_TOAST_BOOT = initBootstrapComponent(
 			PWA_TOAST_EL,
-			(el) => new bootstrap.Toast(el, { delay: 10000 }),
+			function(el) { return new bootstrap.Toast(el, { delay: 10000 }); },
 			"bootstrap.Toast#PWA-reload-toast"
 		);
 	//-----------------------------------------------------------
@@ -98,7 +99,7 @@
 		const PWA_INTOAST_RELOAD_EL = document.getElementById('PWA-in-toast-reload');
 		if(PWA_INTOAST_RELOAD_EL)
 		{
-			PWA_INTOAST_RELOAD_EL.addEventListener('click', () => reloadPwa());
+			PWA_INTOAST_RELOAD_EL.addEventListener('click', function() { reloadPwa(); });
 		}
 	//-----------------------------------------------------------
 //________________________________________________________________________________________
@@ -115,13 +116,16 @@
 // 2-Environement check: running as web page or PWA?______________________________________
 	function main() { // called on script load
 		console.debug("main()");
+		
+		// Always register service worker regardless of display mode
+		registerServiceWorker();
+		
 		if(window.matchMedia("(display-mode: standalone)").matches) {
 			console.log("Running as PWA");
 			// Disable the manual install button if present
 			if(PWA_DIALOG_MANUAL_BUTTON_EL) {
 				PWA_DIALOG_MANUAL_BUTTON_EL.disabled = true;
 			}
-			registerServiceWorker();
 		}
 		else
 		{

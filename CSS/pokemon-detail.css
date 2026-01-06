@@ -1,0 +1,89 @@
+/* 
+pokemon-detail.css
+Description: Pokemon detail page styles for PWAkedex
+Author: Oscar Collins
+*/
+
+/* POKEMON DETAIL MAIN IMAGE___________________________________________________ */
+
+.pokemon-detail-main-image {
+    width: 100%;
+    max-width: 250px;
+    height: auto;
+}
+
+/* TYPE ICONS__________________________________________________________________ */
+
+.type-icon-large {
+    width: 5em;
+    max-width: 80px;
+}
+
+.type-icon-small {
+    width: 3em;
+    max-width: 60px;
+}
+
+/* NAVIGATION BUTTONS__________________________________________________________ */
+
+.pokemon-nav-btn {
+    max-width: 200px;
+}
+
+/* SHARE BUTTON________________________________________________________________ */
+
+#share-pokemon-btn {
+    transition: all 0.2s ease-in-out;
+    border-width: 2px;
+}
+
+#share-pokemon-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+#share-pokemon-btn:active {
+    transform: translateY(0);
+}
+
+#share-pokemon-btn svg {
+    vertical-align: middle;
+    transition: transform 0.2s ease-in-out;
+}
+
+#share-pokemon-btn:hover svg {
+    transform: scale(1.1);
+}
+
+.share-icon {
+    display: inline;
+    vertical-align: middle;
+}
+
+/* SHARE TOAST_________________________________________________________________ */
+
+#share-toast {
+    z-index: 1050;
+}
+
+/* SHARE FALLBACK MODAL________________________________________________________ */
+
+#share-fallback-modal .modal-content {
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+#share-url-input {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+}
+
+#share-url-input:focus {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-color: #0d6efd;
+    color: #fff;
+}
+
+#share-copy-url-btn {
+    min-width: 80px;
+}

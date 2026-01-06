@@ -12,7 +12,7 @@ console.log("Service Worker version:", VERSION);
 // List of files we want to pre-cache during install. These should be
 // static assets required for the app shell to work offline.
 const RESSOURCES = [
-	/* off while testing
+	
 	// root
 	"./",
 
@@ -63,21 +63,24 @@ const RESSOURCES = [
 	"./IMG/elements/steel.png",
 	"./IMG/elements/water.png",
 
-	// client side js (match case used in index.html)
+	// client side js
 	"./JS/version-manager.js",
-	"./JS/pokemon-grid.js",
-	"./JS/fetch-and-DB.js",
+	"./JS/grid-render.js",
+	"./JS/detail-render.js",
+	"./JS/fetch-and-db.js",
 	"./JS/indexed-db-funcs.js",
 	"./JS/share-manager.js",
 
-	// style sheets & local bootstrap bundle (match case used in index.html)
+	// style sheets & local bootstrap bundle
 	"./CSS/style.css",
 	"./lib/bootstrap-5.3.8-dist/css/bootstrap.css",
 	"./lib/bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js",
 	
 	// Dexie library
-	"./lib/dexie/dexie.mjs"
-	*/
+	"./lib/dexie/dexie.mjs",
+
+	//howler.js library
+	"./lib/howler/howler.js",
 ];
 
 

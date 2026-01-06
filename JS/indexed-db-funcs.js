@@ -24,7 +24,7 @@
     import Dexie from 'https://cdn.jsdelivr.net/npm/dexie@3.2.2/dist/dexie.mjs';
 
     const DB_NAME = 'PWAkedexDB';
-    const DB_VERSION = 1; //since this is client side, we shouldn't actually need to change this
+    const DB_VERSION = 2; // Incremented to 2 for species_json_data field addition
     //const STORE_NAME = 'pokemon'; // Table name
 //________________________________________________________________________________________
 
@@ -40,9 +40,13 @@
     // Create database (if it doesnt exist)
     export const db = new Dexie(DB_NAME);
 
-    // and table
-    db.version(DB_VERSION).stores({
+    // Define schema versions
+    db.version(1).stores({
         pokemon: 'id, name, type1, type2, weight, height, full_json_data'
+    });
+    
+    db.version(2).stores({
+        pokemon: 'id, name, type1, type2, weight, height, full_json_data, species_json_data'
     });
 //________________________________________________________________________________________
 
@@ -64,9 +68,9 @@
      */
     function sanitizeString(value) {
         if (typeof value !== 'string') return value;
-        return value.replace(/[<>'"&]/g, char => {
-            const entities = {'<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;','&':'&amp;'};
-            return entities[char];
+        return value.replace(/[<>'"&]/g, function(char) {
+            const ENTITIES = {'<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;','&':'&amp;'};
+            return ENTITIES[char];
         }).trim();
     }
 
@@ -97,7 +101,8 @@
                 type2: sanitizeString(pokeAPI_json.type2) || null,
                 weight: Number(pokeAPI_json.weight) || null,
                 height: Number(pokeAPI_json.height) || null,
-                full_json_data: pokeAPI_json.full_json_data ?? null
+                full_json_data: pokeAPI_json.full_json_data ?? null,
+                species_json_data: pokeAPI_json.species_json_data ?? null
             };
             result =  formattedApiResponse;
         }
@@ -124,7 +129,7 @@
         try {
             // formattedApiResponse should already be sanitized and formatted like this: id, name, type1, type2, weight, height, full_json_data
             result = await db.pokemon.put(formattedApiResponse);
-            console.log("🗃️Saved API response to DB");
+            console.debug("addPokemonToDB() says: Saved API response to DB");
         } 
         
         catch (error) {
@@ -210,6 +215,54 @@
             console.log("Cleared all Pokemon data");
         } catch (error) {
             console.error("clearPokemonDB() error:", error);
+        }
+    }
+
+
+
+    /**
+     * Counts the total number of Pokémon entries in the database.
+     * @returns {Promise<number>} Count of Pokémon in cache, or 0 on error
+     */
+    export async function countPokemonInCache() {
+        let result;
+        console.debug("countPokemonInCache()");
+        try {
+            result = await db.pokemon.count();
+            console.debug(`🗃️ Total Pokémon in cache: ${result}`);
+        }
+        
+        catch (error) {
+            console.error("countPokemonInCache() error:", error);
+            result = 0;
+        }
+
+        return result;
+    }
+
+
+
+    /**
+     * Updates the displayed count of Pokémon stored in IndexedDB cache.
+     * Queries the database and updates the UI element.
+     */
+    export async function updateCacheCount() {
+        const POKEMON_IN_CACHE_EL = document.getElementById('pokemon-in-cache-count');
+        const IN_MODAL_IN_CACHE_EL = document.getElementById('in-modal-pokemon-cache-count');
+        const CACHE_PROGRESS_BAR = document.getElementById('cache-progress-bar');   
+        if (POKEMON_IN_CACHE_EL) {
+            const COUNT = await countPokemonInCache();
+            POKEMON_IN_CACHE_EL.textContent = COUNT;
+        }
+        if (IN_MODAL_IN_CACHE_EL) {
+            const COUNT = await countPokemonInCache();
+            IN_MODAL_IN_CACHE_EL.textContent = COUNT;
+        }
+        if (CACHE_PROGRESS_BAR) {
+            const COUNT = await countPokemonInCache();
+            const PERCENT = Math.min((COUNT / 1010) * 100, 100);
+            CACHE_PROGRESS_BAR.setAttribute('aria-valuenow', COUNT);
+            CACHE_PROGRESS_BAR.querySelector('.progress-bar').style.width = `${PERCENT}%`;
         }
     }
 

@@ -1,0 +1,39 @@
+/* 
+components.css
+Description: Reusable component styles for PWAkedex
+Author: Oscar Collins
+*/
+
+/* PWA RELOAD TOAST____________________________________________________________ */
+
+#PWA-reload-toast {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    z-index: 10;
+}
+
+/* ABILITIES DROPDOWN__________________________________________________________ */
+
+#abilities-dropdown {
+    background-color: #ffffff;
+    color: #444;
+}
+
+/* POPOVER DARK THEME__________________________________________________________ */
+
+.popover-dark {
+    --bs-popover-bg: #2d2d2d;
+    --bs-popover-border-color: #4a4a4a;
+    --bs-popover-body-color: #f0f0f0;
+    --bs-popover-header-bg: #1a1a1a;
+    --bs-popover-header-color: #ffffff;
+}
+
+.popover-dark .popover-arrow::before {
+    border-top-color: #4a4a4a;
+}
+
+.popover-dark .popover-arrow::after {
+    border-top-color: #2d2d2d;
+}
