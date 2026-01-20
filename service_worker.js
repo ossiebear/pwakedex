@@ -6,7 +6,7 @@
 
 
 // app version: bump this string to force clients to refresh the cache
-const VERSION = '0.1';
+const VERSION = '0.2';
 console.log("Service Worker version:", VERSION);
 
 // List of files we want to pre-cache during install. These should be
@@ -81,6 +81,7 @@ const RESSOURCES = [
 
 	//howler.js library
 	"./lib/howler/howler.js",
+	
 ];
 
 

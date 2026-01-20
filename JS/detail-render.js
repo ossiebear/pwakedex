@@ -1,7 +1,7 @@
 // detail-render.js
 // Description: Dynamically fill pokemon_detail.html page with data using fetched Pokémon info from Dexie DB or API
 // Author: Oscar Collins
-// AI usage: Highlight current Pokémon in evolution chain, improved bootsrap classes
+// AI usage: displayWeaknesses(), Highlight current Pokémon in evolution chain, improved bootsrap classes
 
 // Full description:
 // This script fetches detailed information about a specific Pokémon using its ID or name from the URL parameters.
@@ -31,12 +31,14 @@ const EL_TYPE1 = document.getElementById('pokemon-detail-type1-img');
 const EL_TYPE2 = document.getElementById('pokemon-detail-type2-img');
 const EL_ABILITY1 = document.getElementById('pokemon-detail-ability1');
 const EL_ABILITY2 = document.getElementById('pokemon-detail-ability2');
+const EL_ABILITY1_ICON = document.getElementById('pokemon-detail-ability1-icon');
+const EL_ABILITY2_ICON = document.getElementById('pokemon-detail-ability2-icon');
+const EL_ABILITY1_CONTAINER = document.getElementById('pokemon-detail-ability1-container');
+const EL_ABILITY2_CONTAINER = document.getElementById('pokemon-detail-ability2-container');
 const EL_HEIGHT = document.getElementById('pokemon-detail-height');
 const EL_WEIGHT = document.getElementById('pokemon-detail-weight');
 const EL_WEAKNESSES_CONTAINER = document.getElementById('pokemon-weaknesses');
-const EL_STATS_CHART = document.getElementById('pokemon-stats-chart');
 const EL_EVOLUTIONS = document.getElementById('pokemon-evolutions');
-const EL_VARIANTS = document.getElementById('pokemon-variants');
 const EL_SHARE_BUTTON = document.getElementById('share-pokemon-btn');
 
 
@@ -86,6 +88,8 @@ const POKE_TYPES = FULL_POKEMON_DATA.types;
 const POKE_ABILITIES = FULL_POKEMON_DATA.abilities;
 const POKEABILITY1 = POKE_ABILITIES.length > 0 ? POKE_ABILITIES[0].ability.name : null; // check if ability exists, chose 1st, else null
 const POKEABILITY2 = POKE_ABILITIES.length > 1 ? POKE_ABILITIES[1].ability.name : null; // check if ability exists, chose 2nd, else null
+const POKEABILITY_ICON1 =null;
+const POKEABILITY_ICON2 =null;
 const POKE_HEIGHT = FULL_POKEMON_DATA.height;
 const POKE_WEIGHT = FULL_POKEMON_DATA.weight;
 const POKE_STATS = FULL_POKEMON_DATA.stats;
@@ -118,9 +122,146 @@ const POKE_STATS = FULL_POKEMON_DATA.stats;
 
 
     // Set abilities---------------------------------
-    EL_ABILITY1.innerHTML = POKEABILITY1 || 'No ability'; //fallback shouldnt happen
-    EL_ABILITY2.innerHTML = POKEABILITY2 || 'No ability'; //fallback shouldnt happen
+    // Using main type icon and color for ability decoration
+    const primaryType = POKE_TYPES.length > 0 ? POKE_TYPES[0].type.name.toUpperCase() : 'NORMAL';
+    const primaryTypeIcon = POKE_TYPES.length > 0 ? `./IMG/elements/${POKE_TYPES[0].type.name}.png` : './IMG/elements/normal.png';
+    
+    // Helper to Convert Hex to RGBA
+    function hexToRgba(hex, alpha) {
+        const r = parseInt(hex.slice(1, 3), 16);
+        const g = parseInt(hex.slice(3, 5), 16);
+        const b = parseInt(hex.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    }
+
+    const typeColor = TYPE_COLORS[primaryType] || TYPE_COLORS.NORMAL;
+    const itemBgColor = hexToRgba(typeColor, 0.25);
+    const itemBorderColor = hexToRgba(typeColor, 0.5);
+
+    if (POKEABILITY1) {
+        EL_ABILITY1.textContent = POKEABILITY1;
+        EL_ABILITY1_ICON.src = primaryTypeIcon;
+        
+        // Remove standard Bootstrap styling that conflicts
+        EL_ABILITY1_CONTAINER.classList.remove('bg-secondary', 'border-secondary', 'bg-opacity-25', 'border-opacity-25', 'd-none');
+        
+        // Apply dynamic colors
+        EL_ABILITY1_CONTAINER.style.backgroundColor = itemBgColor;
+        EL_ABILITY1_CONTAINER.style.borderColor = itemBorderColor;
+    } else {
+        EL_ABILITY1_CONTAINER.classList.add('d-none');
+    }
+
+    if (POKEABILITY2) {
+        EL_ABILITY2.textContent = POKEABILITY2;
+        EL_ABILITY2_ICON.src = primaryTypeIcon;
+        
+        // Remove standard Bootstrap styling that conflicts
+        EL_ABILITY2_CONTAINER.classList.remove('bg-secondary', 'border-secondary', 'bg-opacity-25', 'border-opacity-25', 'd-none');
+        
+        // Apply dynamic colors
+        EL_ABILITY2_CONTAINER.style.backgroundColor = itemBgColor;
+        EL_ABILITY2_CONTAINER.style.borderColor = itemBorderColor;
+    } else {
+        EL_ABILITY2_CONTAINER.classList.add('d-none');
+    }
     //-----------------------------------------------
+
+
+
+    /** ----------------------------------------------
+     * FULLY AI GENERATED FUNCTION
+     * Display Pokémon weaknesses based on type effectiveness from API
+     * @param {Array} types - Array of type objects from Pokemon data (pokemonData.types)
+     * Calculates combined type effectiveness using damage multipliers
+     * Shows only 2x and 4x weaknesses with type icons (4x gets red border)
+     */
+    async function displayWeaknesses(types) {
+        console.debug("displayWeaknesses()");
+        
+        if (!types || types.length === 0) {
+            EL_WEAKNESSES_CONTAINER.innerHTML = '<p class="text-muted mb-0">No weaknesses data available</p>';
+            return;
+        }
+        
+        try {
+            // Fetch type data for each type to get damage relations
+            const typeDataPromises = types.map(async function(typeObj) {
+                const response = await fetch(typeObj.type.url);
+                if (!response.ok) {
+                    throw new Error(`Type API request failed: ${response.status}`);
+                }
+                return await response.json();
+            });
+            const typeDataArray = await Promise.all(typeDataPromises);
+            
+            // Calculate combined weaknesses
+            const weaknessMultipliers = {};
+            
+            typeDataArray.forEach(function(typeData) {
+                // double_damage_from = types this Pokémon is weak to
+                typeData.damage_relations.double_damage_from.forEach(function(weakness) {
+                    const weaknessName = weakness.name;
+                    if (!weaknessMultipliers[weaknessName]) {
+                        weaknessMultipliers[weaknessName] = 1;
+                    }
+                    weaknessMultipliers[weaknessName] *= 2;
+                });
+                
+                // half_damage_from = types this Pokémon resists
+                typeData.damage_relations.half_damage_from.forEach(function(resistance) {
+                    const resistanceName = resistance.name;
+                    if (!weaknessMultipliers[resistanceName]) {
+                        weaknessMultipliers[resistanceName] = 1;
+                    }
+                    weaknessMultipliers[resistanceName] *= 0.5;
+                });
+                
+                // no_damage_from = types this Pokémon is immune to
+                typeData.damage_relations.no_damage_from.forEach(function(immunity) {
+                    weaknessMultipliers[immunity.name] = 0;
+                });
+            });
+            
+            // Filter for actual weaknesses (2x or 4x damage)
+            const weaknesses = Object.keys(weaknessMultipliers).filter(function(type) {
+                return weaknessMultipliers[type] >= 2;
+            });
+            
+            // Display weakness icons
+            const weaknessesContainer = document.querySelector('#pokemon-weaknesses .d-flex');
+            weaknessesContainer.innerHTML = '';
+            
+            if (weaknesses.length === 0) {
+                weaknessesContainer.innerHTML = '<p class="text-muted mb-0">No major weaknesses</p>';
+            } else {
+                weaknesses.forEach(function(weaknessType) {
+                    const img = document.createElement('img');
+                    img.src = `./IMG/elements/${weaknessType}.png`;
+                    img.alt = weaknessType;
+                    img.className = 'type-icon type-icon-small';
+                    img.style.width = '3em';
+                    img.style.maxWidth = '60px';
+                    
+                    // Add red border for 4x damage weaknesses
+                    if (weaknessMultipliers[weaknessType] === 4) {
+                        img.style.border = '3px solid #dc3545';
+                        img.style.borderRadius = '8px';
+                    }
+                    
+                    weaknessesContainer.appendChild(img);
+                });
+            }
+            
+            console.log(`✅ Displayed ${weaknesses.length} weaknesses`);
+            
+        } catch (error) {
+            console.error('❌ Failed to fetch weakness data:', error);
+            const weaknessesContainer = document.querySelector('#pokemon-weaknesses .d-flex');
+            weaknessesContainer.innerHTML = '<p class="text-muted mb-0">Weakness data unavailable</p>';
+        }
+    }
+    //-------------------------------------------------
 
 
 
@@ -214,10 +355,8 @@ const POKE_STATS = FULL_POKEMON_DATA.stats;
                         
                         // Add arrow between evolutions
                         if (index < evolutionChain.length - 1) {
-                            const arrow = document.createElement('span');
-                            arrow.className = 'fs-3 text-light';
-                            arrow.textContent = '→';
-                            arrow.style.margin = '0 10px';
+                            const arrow = document.createElement('div');
+                            arrow.className = 'evolution-arrow';
                             fragment.appendChild(arrow);
                         }
                     });
@@ -236,15 +375,5 @@ const POKE_STATS = FULL_POKEMON_DATA.stats;
     //-------------------------------------------------
 
     displayEvolutions(SPECIES_DATA, POKE_ID); // Render evolutions
-
-
-
-
-
-
-
-
-
-
-
-displayStats(POKE_STATS); // Render stats chart using D3.js
+    displayWeaknesses(POKE_TYPES); // Render weaknesses
+    displayStats(POKE_STATS); // Render stats chart using D3.js

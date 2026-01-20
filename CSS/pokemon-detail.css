@@ -12,6 +12,10 @@ Author: Oscar Collins
     height: auto;
 }
 
+#pokemon-evolutions {
+    scroll-margin-top: 50vh; 
+}
+
 /* TYPE ICONS__________________________________________________________________ */
 
 .type-icon-large {
@@ -86,4 +90,32 @@ Author: Oscar Collins
 
 #share-copy-url-btn {
     min-width: 80px;
+}
+
+/* EVOLUTION CHAIN RESPONSIVE STYLES___________________________________________ */
+
+.evolution-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #f8f9fa;
+    font-size: 1.75rem; 
+    margin: 0 10px;
+    transition: transform 0.3s ease;
+}
+
+.evolution-arrow::after {
+    content: '→';
+}
+
+@media (max-width: 600px) {
+    #pokemon-evolutions {
+        flex-direction: column !important;
+        gap: 1rem !important;
+    }
+
+    .evolution-arrow {
+        margin: 5px 0;
+        transform: rotate(90deg);
+    }
 }

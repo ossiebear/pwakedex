@@ -107,31 +107,7 @@ AI usage: Icon in Share button
                         Install PWA?
                     </button>
 
-                    <!-- Install dialogue -->
-                    <div class="modal fade" id="Install-PWA-Modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                
-                                <!--Title-->
-                                <div class="modal-header">
-                                    <h5 class="modal-title fs-5">Install as PWA?</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button><!--X close button-->
-                                </div>
 
-                                <!--text-->
-                                <div class="modal-body">
-                                    Installing the app as a PWA allows for offline use
-                                </div>
-
-                                <!--choice buttons-->
-                                <div class="modal-footer">
-                                    <button id="PWA-install-confirm" type="button" class="btn btn-primary" data-bs-dismiss="modal">Install</button>
-                                    <button id="PWA-install-cancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
                  </div>
             </div>
         </div>
@@ -230,9 +206,15 @@ AI usage: Icon in Share button
                             <!-- Abilities Section -->
                             <div class="mb-4">
                                 <h4 class="text-center mb-3 fs-5 fw-semibold">Abilities</h4>
-                                <div class="d-flex justify-content-center align-items-center gap-3 flex-wrap">
-                                    <span id="pokemon-detail-ability1"></span>
-                                    <span id="pokemon-detail-ability2"></span>
+                                <div class="d-flex justify-content-center gap-3 flex-wrap">
+                                    <div id="pokemon-detail-ability1-container" class="px-3 py-2 bg-secondary bg-opacity-25 rounded-pill border border-secondary border-opacity-25 d-flex align-items-center gap-2">
+                                        <img id="pokemon-detail-ability1-icon" src="" alt="Ability type" style="width: 20px; height: 20px; object-fit: contain;">
+                                        <span id="pokemon-detail-ability1" class="text-capitalize fw-medium"></span>
+                                    </div>
+                                    <div id="pokemon-detail-ability2-container" class="px-3 py-2 bg-secondary bg-opacity-25 rounded-pill border border-secondary border-opacity-25 d-flex align-items-center gap-2">
+                                        <img id="pokemon-detail-ability2-icon" src="" alt="Ability type" style="width: 20px; height: 20px; object-fit: contain;">
+                                        <span id="pokemon-detail-ability2" class="text-capitalize fw-medium"></span>
+                                    </div>
                                 </div>
                             </div>
                             
@@ -245,26 +227,22 @@ AI usage: Icon in Share button
                             <!-- Evolution Section -->
                             <div class="mb-4">
                                 <h4 class="text-center mb-3 fs-5 fw-semibold">Evolution Chain</h4>
-                                <div id="pokemon-evolutions" class="d-flex justify-content-center align-items-center flex-wrap mx-auto" style="gap: 0;">
-                                        
+                                <div id="pokemon-evolutions" class="d-flex justify-content-center align-items-center flex-wrap mx-auto">
+
                                 </div>
                             </div>
                             
-                            <!-- Variants Section -->
-                            <div class="mb-4">
-                                <h4 class="text-center mb-3 fs-5 fw-semibold">Variants</h4>
-                                <div id="pokemon-variants" class="d-flex justify-content-center align-items-center gap-3 flex-wrap">
-                                    <p class="text-muted mb-0">Loading variants...</p>
-                                </div>
-                            </div>
                             
                             <!-- Weaknesses Section -->
                             <div id="pokemon-weaknesses" class="text-center">
                                 <h4 class="mb-3 fs-5 fw-semibold">Weaknesses</h4>
                                 <div class="d-flex justify-content-center align-items-center gap-3 flex-wrap">
-                                    <img id="pokemon-detail-weakness1" src="./IMG/elements/normal.png" alt="Weakness 1" class="type-icon type-icon-small">
-                                    <img id="pokemon-detail-weakness2" src="./IMG/elements/normal.png" alt="Weakness 2" class="type-icon type-icon-small">
-                                    <img id="pokemon-detail-weakness3" src="./IMG/elements/normal.png" alt="Weakness 3" class="type-icon type-icon-small">
+                                    <!-- Dynamically populated by displayWeaknesses() -->
+                                </div>
+                                <div class="mt-3">
+                                    <button type="button" class="btn btn-outline-light btn-sm" data-bs-toggle="modal" data-bs-target="#weaknessChartModal">
+                                        Show Type Chart
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -317,6 +295,32 @@ AI usage: Icon in Share button
 
 
 
+    <!-- Install dialogue -->
+    <div class="modal fade" id="Install-PWA-Modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                
+                <!--Title-->
+                <div class="modal-header">
+                    <h5 class="modal-title fs-5">Install as PWA?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button><!--X close button-->
+                </div>
+
+                <!--text-->
+                <div class="modal-body">
+                    Installing the app as a PWA allows for offline use
+                </div>
+
+                <!--choice buttons-->
+                <div class="modal-footer">
+                    <button id="PWA-install-confirm" type="button" class="btn btn-primary" data-bs-dismiss="modal">Install</button>
+                    <button id="PWA-install-cancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
     <!-- Reload toast (Bootstrap) -->
     <div id="PWA-reload-toast" class="toast align-items-center text-bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true">
         <div class="d-flex">
@@ -352,6 +356,51 @@ AI usage: Icon in Share button
                             Copy
                         </button>
                     </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Weakness Chart Modal -->
+    <div class="modal fade" id="weaknessChartModal" tabindex="-1" aria-labelledby="weaknessChartLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content bg-dark text-light">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title" id="weaknessChartLabel">Type Effectiveness Chart</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center mb-4">
+                        <p class="mb-3">
+                            <strong>How to read this chart:</strong><br>
+                            Find the <b>Attacking Type</b> on the left and the <b>Defending Type</b> at the top.
+                        </p>
+                        
+                        <hr class="border-light border-2 opacity-75">
+
+                        <div class="d-inline-block text-start">
+                            <div class="mb-1">
+                                <img src="./IMG/effective/Veffective.svg" alt="Super Effective" style="height: 1.2em; vertical-align: middle;"> 
+                                <span class="ms-2"><b>x2</b> Super Effective</span>
+                            </div>
+                            <div class="mb-1">
+                                <img src="./IMG/effective/effective.svg" alt="Normal" style="height: 1.2em; vertical-align: middle;"> 
+                                <span class="ms-2"><b>x1</b> Normal</span>
+                            </div>
+                            <div class="mb-1">
+                                <img src="./IMG/effective/NVeffective.svg" alt="Not Very Effective" style="height: 1.2em; vertical-align: middle;"> 
+                                <span class="ms-2"><b>x0.5</b> Not Very Effective</span>
+                            </div>
+                            <div>
+                                <img src="./IMG/effective/Neffective.svg" alt="No Effect" style="height: 1.2em; vertical-align: middle;"> 
+                                <span class="ms-2"><b>x0</b> No Effect</span>
+                            </div>
+                        </div>
+                    </div>
+                    <img src="./IMG/effective/WeaknessChart.png" alt="Type Effectiveness Chart" class="img-fluid" style="max-width: 100%; height: auto;">
                 </div>
                 <div class="modal-footer border-secondary">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

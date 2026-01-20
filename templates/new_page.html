@@ -96,31 +96,7 @@ Author: Oscar Collins
                         Install PWA?
                     </button>
 
-                    <!-- Install dialogue -->
-                    <div class="modal fade" id="Install-PWA-Modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                
-                                <!--Title-->
-                                <div class="modal-header">
-                                    <h5 class="modal-title fs-5">Install as PWA?</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button><!--X close button-->
-                                </div>
 
-                                <!--text-->
-                                <div class="modal-body">
-                                    Installing the app as a PWA allows for offline use
-                                </div>
-
-                                <!--choice buttons-->
-                                <div class="modal-footer">
-                                    <button id="PWA-install-confirm" type="button" class="btn btn-primary" data-bs-dismiss="modal">Install</button>
-                                    <button id="PWA-install-cancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
                  </div>
             </div>
         </div>
@@ -158,6 +134,32 @@ Author: Oscar Collins
     </div>
     </footer>
 
+
+    <!-- Install dialogue -->
+    <div class="modal fade" id="Install-PWA-Modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                
+                <!--Title-->
+                <div class="modal-header">
+                    <h5 class="modal-title fs-5">Install as PWA?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button><!--X close button-->
+                </div>
+
+                <!--text-->
+                <div class="modal-body">
+                    Installing the app as a PWA allows for offline use
+                </div>
+
+                <!--choice buttons-->
+                <div class="modal-footer">
+                    <button id="PWA-install-confirm" type="button" class="btn btn-primary" data-bs-dismiss="modal">Install</button>
+                    <button id="PWA-install-cancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
 
     <!-- Reload toast (Bootstrap) -->
     <div id="PWA-reload-toast" class="toast align-items-center text-bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true">
